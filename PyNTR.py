@@ -8,7 +8,6 @@
 #	
 
 import socket
-from enum import Enum
 from array import array
 from time import sleep
 import re
