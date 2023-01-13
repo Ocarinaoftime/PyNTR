@@ -7,8 +7,10 @@
 #	Haifischbecken Team - <3
 #	
 
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
+
 import socket
-from enum import Enum
 from array import array
 from time import sleep
 import re
@@ -75,7 +77,7 @@ class PyNTR:
 		# 	data = b''
 
 		#print(data)
-		packet_header = array('I', (0x12345678, self.sequence, packet_type, command))
+		packet_header = array('l', (0x12345678, self.sequence, packet_type, command), )
 		packet_header.extend(args)
 		packet_header.extend([0] * (16 - len(args)))
 		packet_header.append(len(data)) # len(data)
@@ -124,7 +126,7 @@ class PyNTR:
 
 	# Writing
 
-	def WriteCustom(self, addr, data, length, isSigned=False):
+	def WriteCustom(self, addr, data, length, isSigned=True):
 		# Safety checks and stuff
 		t = type(data)
 		if t == type(0):
@@ -154,7 +156,7 @@ class PyNTR:
 
 	# Reading
 
-	def ReadCustom(self, addr, length, isSigned=False):
+	def ReadCustom(self, addr, length, isSigned=True):
 		self.send_read_memory_packet(addr, length)
 		return int.from_bytes(self.read_packet(), byteorder='little', signed=isSigned)
 
